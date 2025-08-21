@@ -6,9 +6,9 @@ import type {
 	FormFieldValueUpdate,
 	IFormInputs,
 	IInviteResponse,
-	IUser,
 	InvitableRoleName,
 } from '@/Interface';
+import type { IUser } from '@n8n/rest-api-client/api/users';
 import { EnterpriseEditionFeature, VALID_EMAIL_REGEX, INVITE_USER_MODAL_KEY } from '@/constants';
 import { ROLE } from '@n8n/api-types';
 import { useUsersStore } from '@/stores/users.store';
@@ -308,7 +308,7 @@ function getEmail(email: string): string {
 				<I18nT keypath="settings.users.advancedPermissions.warning" scope="global">
 					<template #link>
 						<n8n-link size="small" @click="goToUpgradeAdvancedPermissions">
-							{{ i18n.baseText('settings.users.advancedPermissions.warning.link') }}
+							{{ i18n.baseText('generic.upgrade') }}
 						</n8n-link>
 					</template>
 				</I18nT>
