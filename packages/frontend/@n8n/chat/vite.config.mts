@@ -91,6 +91,10 @@ export default mergeConfig(
 		},
 		build: {
 			emptyOutDir: !includeVue,
+			// Add memory optimization options
+			minify: 'esbuild',
+			target: 'es2020',
+			chunkSizeWarningLimit: 2000,
 			lib: {
 				entry: resolve(__dirname, 'src', 'index.ts'),
 				name: 'N8nChat',
@@ -111,6 +115,9 @@ export default mergeConfig(
 						: {
 								vue: 'Vue',
 							},
+					// Add chunk optimization
+					manualChunks: undefined,
+					chunkFileNames: 'chunks/[name]-[hash].js',
 				},
 			},
 		},

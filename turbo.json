@@ -1,10 +1,11 @@
 {
-	"globalEnv": ["CI", "COVERAGE_ENABLED"],
+	"globalEnv": ["CI", "COVERAGE_ENABLED", "NODE_OPTIONS"],
 	"tasks": {
 		"clean": { "cache": false },
 		"build": {
 			"dependsOn": ["^build"],
-			"outputs": ["dist/**"]
+			"outputs": ["dist/**"],
+			"env": ["NODE_OPTIONS"]
 		},
 		"typecheck": {
 			"dependsOn": ["^typecheck", "^build"]
