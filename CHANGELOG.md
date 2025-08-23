@@ -1,3 +1,7 @@
+## [1.108.1](https://github.com/KhanhPham2411/n8n-atom/compare/n8n@1.108.1...n8n@1.108.1) (2025-08-23)
+
+
+
 # [1.108.0](https://github.com/n8n-io/n8n/compare/n8n@1.107.0...n8n@1.108.0) (2025-08-18)
 
 
