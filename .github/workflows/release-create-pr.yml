@@ -63,18 +63,13 @@ jobs:
         run: |
           git push -f origin "${{ env.BASE_BRANCH }}:refs/heads/release/${{ env.NEXT_RELEASE }}"
 
-      - name: Push the release branch, and Create the PR
-        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e
-        with:
-          base: 'release/${{ env.NEXT_RELEASE }}'
-          branch: 'release-pr/${{ env.NEXT_RELEASE }}'
-          commit-message: ':rocket: Release ${{ env.NEXT_RELEASE }}'
-          delete-branch: true
-          labels: release,release:${{ github.event.inputs.release-type }}
-          title: ':rocket: Release ${{ env.NEXT_RELEASE }}'
-          body: |
-            Automated release PR for version ${{ env.NEXT_RELEASE }}.
-
-            This PR contains the changes for the ${{ env.NEXT_RELEASE }} release.
-
-            Please review the changes and merge if appropriate.
+      - name: Create Pull Request
+        run: |
+          gh pr create \
+            --base "release/${{ env.NEXT_RELEASE }}" \
+            --head "release-pr/${{ env.NEXT_RELEASE }}" \
+            --title ":rocket: Release ${{ env.NEXT_RELEASE }}" \
+            --body "Automated release PR for version ${{ env.NEXT_RELEASE }}. This PR contains the changes for the ${{ env.NEXT_RELEASE }} release. Please review the changes and merge if appropriate." \
+            --label "release,release:${{ github.event.inputs.release-type }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
