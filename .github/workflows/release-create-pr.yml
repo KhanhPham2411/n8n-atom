@@ -65,11 +65,23 @@ jobs:
 
       - name: Create Pull Request
         run: |
-          gh pr create \
-            --base "release/${{ env.NEXT_RELEASE }}" \
-            --head "release-pr/${{ env.NEXT_RELEASE }}" \
-            --title ":rocket: Release ${{ env.NEXT_RELEASE }}" \
-            --body "Automated release PR for version ${{ env.NEXT_RELEASE }}. This PR contains the changes for the ${{ env.NEXT_RELEASE }} release. Please review the changes and merge if appropriate." \
-            --label "release,release:${{ github.event.inputs.release-type }}"
+          # Check if PR already exists
+          if gh pr list --base "release/${{ env.NEXT_RELEASE }}" --head "release-pr/${{ env.NEXT_RELEASE }}" --json number --jq '.[0].number' | grep -q .; then
+            echo "Pull request already exists, updating it..."
+            PR_NUMBER=$(gh pr list --base "release/${{ env.NEXT_RELEASE }}" --head "release-pr/${{ env.NEXT_RELEASE }}" --json number --jq '.[0].number')
+            gh pr edit $PR_NUMBER \
+              --title ":rocket: Release ${{ env.NEXT_RELEASE }}" \
+              --body "Automated release PR for version ${{ env.NEXT_RELEASE }}. This PR contains the changes for the ${{ env.NEXT_RELEASE }} release. Please review the changes and merge if appropriate."
+            echo "Pull request $PR_NUMBER updated successfully"
+          else
+            echo "Creating new pull request..."
+            gh pr create \
+              --base "release/${{ env.NEXT_RELEASE }}" \
+              --head "release-pr/${{ env.NEXT_RELEASE }}" \
+              --title ":rocket: Release ${{ env.NEXT_RELEASE }}" \
+              --body "Automated release PR for version ${{ env.NEXT_RELEASE }}. This PR contains the changes for the ${{ env.NEXT_RELEASE }} release. Please review the changes and merge if appropriate." \
+              --label "release,release:${{ github.event.inputs.release-type }}"
+            echo "Pull request created successfully"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
