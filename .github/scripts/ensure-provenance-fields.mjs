@@ -26,7 +26,7 @@ for (let { name, path, version, private: isPrivate } of packages) {
 		},
 		repository: {
 			type: 'git',
-			url: 'git+https://github.com/n8n-io/n8n.git',
+			url: 'git+https://github.com/KhanhPham2411/n8n-atom.git',
 		},
 	};
 
