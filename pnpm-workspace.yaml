@@ -1,6 +1,7 @@
 packages:
   - packages/*
   - packages/@n8n/*
+  - packages/@thorclient/*
   - packages/frontend/**
   - packages/extensions/**
   - cypress
