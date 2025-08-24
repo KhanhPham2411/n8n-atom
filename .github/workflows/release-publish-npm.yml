@@ -1,0 +1,73 @@
+name: 'Release: Publish to NPM Only'
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'The release version to publish (e.g., 1.108.1)'
+        required: true
+        type: string
+      release_branch:
+        description: 'The release branch to publish from (e.g., release/1.108.1)'
+        required: true
+        type: string
+        default: 'release/1.108.1'
+
+jobs:
+  publish-to-npm:
+    name: Publish to NPM Only
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      id-token: write
+    env:
+      NPM_CONFIG_PROVENANCE: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.release_branch }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.x
+
+      - name: Setup corepack and pnpm
+        run: |
+          npm i -g corepack@0.33
+          corepack enable
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Set release version in env
+        run: echo "RELEASE=${{ github.event.inputs.release_version }}" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: pnpm build
+
+      - name: Cache build artifacts
+        uses: actions/cache/save@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: ./packages/**/dist
+          key: ${{ github.sha }}-release:build
+
+      - name: Dry-run publishing
+        run: pnpm publish -r --no-git-checks --dry-run
+
+      - name: Pre publishing changes
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          node .github/scripts/trim-fe-packageJson.js
+          node .github/scripts/ensure-provenance-fields.mjs
+          cp README.md packages/cli/README.md
+          sed -i "s/default: 'dev'/default: 'stable'/g" packages/cli/dist/config/schema.js
+
+      - name: Publish to NPM
+        run: pnpm publish -r --publish-branch ${{ github.event.inputs.release_branch }} --access public --tag latest --no-git-checks
+
+      - name: Success Message
+        run: |
+          echo "✅ Successfully published n8n-atom@${{ env.RELEASE }} to NPM!"
+          echo "📦 Package is now available on npmjs.com as 'n8n-atom'"
+          echo "🏷️  Published with 'rc' tag (will be cleaned up automatically)"
