@@ -90,6 +90,7 @@
     "@n8n/ai-workflow-builder": "workspace:*",
     "@n8n/api-types": "workspace:*",
     "@thorclient/backend-common": "workspace:^",
+    "@n8n/backend-common": "workspace:^",
     "@n8n/backend-test-utils": "workspace:^",
     "@n8n/client-oauth2": "workspace:*",
     "@n8n/config": "workspace:*",

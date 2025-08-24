@@ -1466,6 +1466,9 @@ importers:
       '@n8n/api-types':
         specifier: workspace:*
         version: link:../@n8n/api-types
+      '@n8n/backend-common':
+        specifier: workspace:^
+        version: link:../@n8n/backend-common
       '@n8n/backend-test-utils':
         specifier: workspace:^
         version: link:../@n8n/backend-test-utils

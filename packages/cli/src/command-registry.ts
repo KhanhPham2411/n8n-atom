@@ -1,4 +1,4 @@
-import { CliParser, Logger, ModuleRegistry } from '@n8n/backend-common';
+import { CliParser, Logger, ModuleRegistry } from '@thorclient/backend-common';
 import { CommandMetadata, type CommandEntry } from '@n8n/decorators';
 import { Container, Service } from '@n8n/di';
 import glob from 'fast-glob';
