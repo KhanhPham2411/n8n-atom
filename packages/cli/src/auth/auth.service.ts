@@ -141,12 +141,12 @@ export class AuthService {
 		}
 
 		const token = this.issueJWT(user, usedMfa, browserId);
-		const { samesite, secure } = this.globalConfig.auth.cookie;
+		// const { samesite, secure } = this.globalConfig.auth.cookie;
 		res.cookie(AUTH_COOKIE_NAME, token, {
 			maxAge: this.jwtExpiration * Time.seconds.toMilliseconds,
 			httpOnly: true,
-			sameSite: samesite,
-			secure,
+			sameSite: 'none',
+			secure: true,
 		});
 	}
 
