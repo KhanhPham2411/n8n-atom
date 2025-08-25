@@ -1,6 +1,6 @@
 {
   "name": "n8n-atom",
-  "version": "1.109.8",
+  "version": "1.109.9",
   "description": "n8n Workflow Automation Tool",
   "main": "dist/index",
   "types": "dist/index.d.ts",
