@@ -1,7 +1,7 @@
 {
   "name": "@n8n/eslint-plugin-community-nodes",
   "type": "module",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "main": "./dist/plugin.js",
   "types": "./dist/plugin.d.ts",
   "exports": {

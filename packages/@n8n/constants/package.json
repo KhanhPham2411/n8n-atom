@@ -1,6 +1,6 @@
 {
   "name": "@n8n/constants",
-  "version": "0.15.5",
+  "version": "0.15.6",
   "scripts": {
     "clean": "rimraf dist .turbo",
     "dev": "pnpm watch",
