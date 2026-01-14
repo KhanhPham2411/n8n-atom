@@ -1,6 +1,6 @@
 {
   "name": "@n8n/vitest-config",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "type": "module",
   "peerDependencies": {
     "vite": "catalog:",

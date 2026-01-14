@@ -2,7 +2,7 @@
   "private": true,
   "name": "@n8n/stylelint-config",
   "type": "module",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "exports": {
     "./base": {
       "default": "./dist/configs/base.js",
