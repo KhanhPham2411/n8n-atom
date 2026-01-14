@@ -8,20 +8,11 @@
       "boardId": "",
       "tasks": [
         {
-          "id": "task_n9npd2_mjs9q9al",
-          "title": "CLI to execute JSON file",
-          "description": "",
+          "id": "task_gpzi7x_mkdu2bcx",
+          "title": "bug with npx",
+          "description": "```\nnpx -y @atom8n/n8n@latest\n```\n\n```\nTry to activate workflow \"Twitter Bot Workflow\" (1zDwVP0kiudhd1BH)\nUnrecognized node type: n8n-nodes-base.manualTrigger\n```",
           "priority": "MEDIUM",
           "order": 0,
-          "columnId": "col_3rc1nh_mjs9q4pl",
-          "assigneeId": null
-        },
-        {
-          "id": "task_a0rkti_mjs9qlf8",
-          "title": "Remove authentication/login",
-          "description": "",
-          "priority": "MEDIUM",
-          "order": 1,
           "columnId": "col_3rc1nh_mjs9q4pl",
           "assigneeId": null
         }
@@ -39,6 +30,24 @@
           "description": "- keep in mind to the keep the core features when resolve conflict\n- Auto resolve conflict yourself",
           "priority": "MEDIUM",
           "order": 0,
+          "columnId": "col_3y6a3v_mjs9q4pl",
+          "assigneeId": null
+        },
+        {
+          "id": "task_a0rkti_mjs9qlf8",
+          "title": "Remove authentication/login",
+          "description": "",
+          "priority": "MEDIUM",
+          "order": 2,
+          "columnId": "col_3y6a3v_mjs9q4pl",
+          "assigneeId": null
+        },
+        {
+          "id": "task_n9npd2_mjs9q9al",
+          "title": "CLI to execute JSON file",
+          "description": "",
+          "priority": "MEDIUM",
+          "order": 1,
           "columnId": "col_3y6a3v_mjs9q4pl",
           "assigneeId": null
         }

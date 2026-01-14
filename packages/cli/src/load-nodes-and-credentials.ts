@@ -86,6 +86,10 @@ export class LoadNodesAndCredentials {
 			path.join(CLI_DIR, 'node_modules'),
 		];
 
+		// [BUG-NPX-DEBUG] Log init paths
+		this.logger.info(`[BUG-NPX-DEBUG] init: CLI_DIR="${CLI_DIR}"`);
+		this.logger.info(`[BUG-NPX-DEBUG] init: basePathsToScan=${JSON.stringify(basePathsToScan)}`);
+
 		for (const nodeModulesDir of basePathsToScan) {
 			await this.loadNodesFromNodeModules(nodeModulesDir, 'n8n-nodes-base');
 			await this.loadNodesFromNodeModules(nodeModulesDir, '@atom8n/n8n-nodes-base');
@@ -141,13 +145,25 @@ export class LoadNodesAndCredentials {
 					...(await glob('@*/n8n-nodes-*', { ...globOptions, deep: 2 })),
 				];
 
+		// [BUG-NPX-DEBUG] Log node modules scanning
+		this.logger.info(
+			`[BUG-NPX-DEBUG] loadNodesFromNodeModules: scanning nodeModulesDir="${nodeModulesDir}" for packageName="${packageName ?? 'all n8n-nodes-*'}"`,
+		);
+		this.logger.info(
+			`[BUG-NPX-DEBUG] loadNodesFromNodeModules: found ${installedPackagePaths.length} package paths: ${JSON.stringify(installedPackagePaths)}`,
+		);
+
 		for (const packagePath of installedPackagePaths) {
 			try {
-				await this.runDirectoryLoader(
-					LazyPackageDirectoryLoader,
-					path.join(nodeModulesDir, packagePath),
+				const fullPath = path.join(nodeModulesDir, packagePath);
+				this.logger.info(
+					`[BUG-NPX-DEBUG] loadNodesFromNodeModules: loading package from fullPath="${fullPath}"`,
 				);
+				await this.runDirectoryLoader(LazyPackageDirectoryLoader, fullPath);
 			} catch (error) {
+				this.logger.error(
+					`[BUG-NPX-DEBUG] loadNodesFromNodeModules: error loading package from "${packagePath}": ${(error as Error).message}`,
+				);
 				this.logger.error((error as Error).message);
 				this.errorReporter.error(error);
 			}
@@ -423,6 +439,11 @@ export class LoadNodesAndCredentials {
 	) {
 		const loader = new constructor(dir, this.excludeNodes, this.includeNodes);
 
+		// [BUG-NPX-DEBUG] Log original package name from package.json
+		this.logger.info(
+			`[BUG-NPX-DEBUG] runDirectoryLoader: created loader for dir="${dir}" with original packageName="${loader.packageName}"`,
+		);
+
 		// Normalize package name for @atom8n packages to ensure correct node lookups
 		// When npm installs with aliases (e.g., "n8n-nodes-base": "npm:@atom8n/n8n-nodes-base@2.2.7"),
 		// the package.json still has the scoped name, but workflows reference the unscoped name
@@ -433,7 +454,15 @@ export class LoadNodesAndCredentials {
 			packageName = '@n8n/n8n-nodes-langchain';
 		}
 
+		// [BUG-NPX-DEBUG] Log normalized package name
+		this.logger.info(
+			`[BUG-NPX-DEBUG] runDirectoryLoader: normalized packageName="${packageName}" (original was "${loader.packageName}")`,
+		);
+
 		if (loader instanceof PackageDirectoryLoader && packageName in this.loaders) {
+			this.logger.warn(
+				`[BUG-NPX-DEBUG] runDirectoryLoader: package ${packageName} already loaded, skipping duplicate at ${dir}`,
+			);
 			throw new UserError(
 				picocolors.red(
 					`nodes package ${packageName} is already loaded.\n Please delete this second copy at path ${dir}`,
@@ -441,6 +470,15 @@ export class LoadNodesAndCredentials {
 			);
 		}
 		await loader.loadAll();
+
+		// [BUG-NPX-DEBUG] Log successful loader registration
+		this.logger.info(
+			`[BUG-NPX-DEBUG] runDirectoryLoader: registered loader for packageName="${packageName}", loader.known.nodes count=${Object.keys(loader.known.nodes).length}`,
+		);
+		this.logger.info(
+			`[BUG-NPX-DEBUG] runDirectoryLoader: first 10 known nodes: ${Object.keys(loader.known.nodes).slice(0, 10).join(', ')}`,
+		);
+
 		this.loaders[packageName] = loader;
 		return loader;
 	}
@@ -484,9 +522,20 @@ export class LoadNodesAndCredentials {
 		this.loaded = { nodes: {}, credentials: {} };
 		this.types = { nodes: [], credentials: [] };
 
+		// [BUG-NPX-DEBUG] Log all registered loaders
+		const loaderKeys = Object.keys(this.loaders);
+		this.logger.info(
+			`[BUG-NPX-DEBUG] postProcessLoaders: processing ${loaderKeys.length} loaders: ${loaderKeys.join(', ')}`,
+		);
+
 		for (const loader of Object.values(this.loaders)) {
 			// list of node & credential types that will be sent to the frontend
 			const { known, types, directory, packageName } = loader;
+
+			// [BUG-NPX-DEBUG] Log each loader being processed
+			this.logger.info(
+				`[BUG-NPX-DEBUG] postProcessLoaders: processing loader packageName="${packageName}", directory="${directory}", known.nodes count=${Object.keys(known.nodes).length}`,
+			);
 			this.types.nodes = this.types.nodes.concat(
 				types.nodes.map(({ name, ...rest }) => ({
 					...rest,
@@ -575,19 +624,48 @@ export class LoadNodesAndCredentials {
 
 		const { loaders } = this;
 		const loader = loaders[packageName];
-		return !!loader && nodeType in loader.known.nodes;
+		const result = !!loader && nodeType in loader.known.nodes;
+
+		// [BUG-NPX-DEBUG] Log recognizesNode check
+		this.logger.debug(
+			`[BUG-NPX-DEBUG] recognizesNode: fullNodeType="${fullNodeType}", packageName="${packageName}", nodeType="${nodeType}", loaderExists=${!!loader}, result=${result}`,
+		);
+
+		return result;
 	}
 
 	getNode(fullNodeType: string): LoadedClass<INodeType | IVersionedNodeType> {
 		let [packageName, nodeType] = fullNodeType.split('.');
+
+		// [BUG-NPX-DEBUG] Log incoming request
+		this.logger.debug(
+			`[BUG-NPX-DEBUG] getNode: looking up fullNodeType="${fullNodeType}", parsed packageName="${packageName}", nodeType="${nodeType}"`,
+		);
+
 		if (packageName === '@atom8n/n8n-nodes-base') packageName = 'n8n-nodes-base';
 		if (packageName === '@atom8n/n8n-nodes-langchain') packageName = '@n8n/n8n-nodes-langchain';
 
 		const { loaders } = this;
 		const loader = loaders[packageName];
+
+		// [BUG-NPX-DEBUG] Log loader lookup result
 		if (!loader) {
+			const availableLoaders = Object.keys(loaders);
+			this.logger.error(
+				`[BUG-NPX-DEBUG] getNode: FAILED! No loader found for packageName="${packageName}". Available loaders: ${availableLoaders.join(', ')}`,
+			);
 			throw new UnrecognizedNodeTypeError(packageName, nodeType);
 		}
+
+		// [BUG-NPX-DEBUG] Log loader details before getting node
+		this.logger.debug(
+			`[BUG-NPX-DEBUG] getNode: found loader for "${packageName}", loader.packageName="${loader.packageName}", checking for nodeType="${nodeType}"`,
+		);
+		const hasNodeInKnown = nodeType in loader.known.nodes;
+		this.logger.debug(
+			`[BUG-NPX-DEBUG] getNode: nodeType "${nodeType}" in loader.known.nodes: ${hasNodeInKnown}`,
+		);
+
 		const loadedNode = loader.getNode(nodeType);
 		if (
 			this.shouldInjectContextEstablishmentHooks() &&

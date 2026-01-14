@@ -26,9 +26,25 @@ export class PackageDirectoryLoader extends DirectoryLoader {
 
 	override async loadAll() {
 		const { n8n, version, name } = this.packageJson;
-		if (!n8n) return;
+
+		// [BUG-NPX-DEBUG] Log package loading attempt
+		this.logger.info(
+			`[BUG-NPX-DEBUG] PackageDirectoryLoader.loadAll: loading from packageName="${name}", directory="${this.directory}"`,
+		);
+
+		if (!n8n) {
+			this.logger.warn(
+				`[BUG-NPX-DEBUG] PackageDirectoryLoader.loadAll: NO n8n field in package.json for "${name}"`,
+			);
+			return;
+		}
 
 		const { nodes, credentials } = n8n;
+
+		// [BUG-NPX-DEBUG] Log n8n field contents
+		this.logger.info(
+			`[BUG-NPX-DEBUG] PackageDirectoryLoader.loadAll: n8n.nodes count=${nodes?.length ?? 0}, n8n.credentials count=${credentials?.length ?? 0}`,
+		);
 
 		const packageVersion = !['n8n-nodes-base', '@n8n/n8n-nodes-langchain'].includes(name)
 			? version
@@ -47,6 +63,14 @@ export class PackageDirectoryLoader extends DirectoryLoader {
 		}
 
 		this.inferSupportedNodes();
+
+		// [BUG-NPX-DEBUG] Log loaded nodes
+		this.logger.info(
+			`[BUG-NPX-DEBUG] PackageDirectoryLoader.loadAll: FINISHED loading from "${name}", known.nodes count=${Object.keys(this.known.nodes).length}`,
+		);
+		this.logger.info(
+			`[BUG-NPX-DEBUG] PackageDirectoryLoader.loadAll: manualTrigger in known.nodes: ${'manualTrigger' in this.known.nodes}`,
+		);
 
 		this.logger.debug(`Loaded all credentials and nodes from ${this.packageName}`, {
 			credentials: credentials?.length ?? 0,
