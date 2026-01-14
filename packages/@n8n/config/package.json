@@ -1,6 +1,6 @@
 {
   "name": "@n8n/config",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "scripts": {
     "clean": "rimraf dist .turbo",
     "dev": "pnpm watch",
