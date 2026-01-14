@@ -1,6 +1,6 @@
 {
   "name": "n8n-atom-v3",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": true,
   "engines": {
     "node": ">=22.16",
