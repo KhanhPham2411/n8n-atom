@@ -26,7 +26,7 @@ export class ChatServer {
 
 			if (parsedUrl.pathname?.startsWith('/chat')) {
 				this.wsServer.handleUpgrade(req, socket, head, (ws) => {
-					this.attachToApp(req, ws, app as ExpressApplication);
+					this.attachToApp(req, ws as unknown as WebSocket, app as ExpressApplication);
 				});
 			}
 		});

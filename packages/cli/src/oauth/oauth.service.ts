@@ -33,6 +33,7 @@ import {
 	oAuthAuthorizationServerMetadataSchema,
 	dynamicClientRegistrationResponseSchema,
 } from '@/controllers/oauth/oauth2-dynamic-client-registration.schema';
+// @ts-ignore: Module resolution issue with pkce-challenge
 import pkceChallenge from 'pkce-challenge';
 import * as qs from 'querystring';
 import split from 'lodash/split';

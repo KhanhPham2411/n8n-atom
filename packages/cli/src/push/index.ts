@@ -72,7 +72,7 @@ export class Push extends TypedEmitter<PushEvents> {
 			server.on('upgrade', (request: WebSocketPushRequest, socket, upgradeHead) => {
 				if (parseUrl(request.url).pathname === `/${restEndpoint}/push`) {
 					wsServer.handleUpgrade(request, socket, upgradeHead, (ws) => {
-						request.ws = ws;
+						request.ws = ws as any;
 
 						const response = new ServerResponse(request);
 						response.writeHead = (statusCode) => {

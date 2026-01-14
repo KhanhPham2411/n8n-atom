@@ -19,7 +19,7 @@ import { TaskRunnerLifecycleEvents } from '@/task-runners/task-runner-lifecycle-
 import { TaskBroker, type MessageCallback, type TaskRunner } from './task-broker.service';
 
 function heartbeat(this: WebSocket) {
-	this.isAlive = true;
+	(this as any).isAlive = true;
 }
 
 type WsStatusCode = (typeof WsStatusCodes)[keyof typeof WsStatusCodes];
@@ -55,7 +55,7 @@ export class TaskBrokerWsServer {
 
 		this.heartbeatTimer = setInterval(() => {
 			for (const [runnerId, connection] of this.runnerConnections.entries()) {
-				if (!connection.isAlive) {
+				if (!(connection as any).isAlive) {
 					void this.removeConnection(
 						runnerId,
 						'failed-heartbeat-check',
@@ -64,7 +64,7 @@ export class TaskBrokerWsServer {
 					this.runnerLifecycleEvents.emit('runner:failed-heartbeat-check');
 					return;
 				}
-				connection.isAlive = false;
+				(connection as any).isAlive = false;
 				connection.ping();
 			}
 		}, heartbeatInterval * Time.seconds.toMilliseconds);
@@ -92,7 +92,7 @@ export class TaskBrokerWsServer {
 	}
 
 	add(id: TaskRunner['id'], connection: WebSocket) {
-		connection.isAlive = true;
+		(connection as any).isAlive = true;
 		connection.on('pong', heartbeat);
 
 		let isConnected = false;
