@@ -88,7 +88,9 @@ export class LoadNodesAndCredentials {
 
 		for (const nodeModulesDir of basePathsToScan) {
 			await this.loadNodesFromNodeModules(nodeModulesDir, 'n8n-nodes-base');
+			await this.loadNodesFromNodeModules(nodeModulesDir, '@atom8n/n8n-nodes-base');
 			await this.loadNodesFromNodeModules(nodeModulesDir, '@n8n/n8n-nodes-langchain');
+			await this.loadNodesFromNodeModules(nodeModulesDir, '@atom8n/n8n-nodes-langchain');
 		}
 
 		for (const dir of this.moduleRegistry.loadDirs) {
@@ -556,14 +558,20 @@ export class LoadNodesAndCredentials {
 	}
 
 	recognizesNode(fullNodeType: string): boolean {
-		const [packageName, nodeType] = fullNodeType.split('.');
+		let [packageName, nodeType] = fullNodeType.split('.');
+		if (packageName === '@atom8n/n8n-nodes-base') packageName = 'n8n-nodes-base';
+		if (packageName === '@atom8n/n8n-nodes-langchain') packageName = '@n8n/n8n-nodes-langchain';
+
 		const { loaders } = this;
 		const loader = loaders[packageName];
 		return !!loader && nodeType in loader.known.nodes;
 	}
 
 	getNode(fullNodeType: string): LoadedClass<INodeType | IVersionedNodeType> {
-		const [packageName, nodeType] = fullNodeType.split('.');
+		let [packageName, nodeType] = fullNodeType.split('.');
+		if (packageName === '@atom8n/n8n-nodes-base') packageName = 'n8n-nodes-base';
+		if (packageName === '@atom8n/n8n-nodes-langchain') packageName = '@n8n/n8n-nodes-langchain';
+
 		const { loaders } = this;
 		const loader = loaders[packageName];
 		if (!loader) {
