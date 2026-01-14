@@ -422,15 +422,26 @@ export class LoadNodesAndCredentials {
 		dir: string,
 	) {
 		const loader = new constructor(dir, this.excludeNodes, this.includeNodes);
-		if (loader instanceof PackageDirectoryLoader && loader.packageName in this.loaders) {
+
+		// Normalize package name for @atom8n packages to ensure correct node lookups
+		// When npm installs with aliases (e.g., "n8n-nodes-base": "npm:@atom8n/n8n-nodes-base@2.2.7"),
+		// the package.json still has the scoped name, but workflows reference the unscoped name
+		let packageName = loader.packageName;
+		if (packageName === '@atom8n/n8n-nodes-base') {
+			packageName = 'n8n-nodes-base';
+		} else if (packageName === '@atom8n/n8n-nodes-langchain') {
+			packageName = '@n8n/n8n-nodes-langchain';
+		}
+
+		if (loader instanceof PackageDirectoryLoader && packageName in this.loaders) {
 			throw new UserError(
 				picocolors.red(
-					`nodes package ${loader.packageName} is already loaded.\n Please delete this second copy at path ${dir}`,
+					`nodes package ${packageName} is already loaded.\n Please delete this second copy at path ${dir}`,
 				),
 			);
 		}
 		await loader.loadAll();
-		this.loaders[loader.packageName] = loader;
+		this.loaders[packageName] = loader;
 		return loader;
 	}
 
