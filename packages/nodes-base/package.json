@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-base",
-  "version": "2.2.10",
+  "version": "2.2.11",
   "description": "Base nodes of n8n",
   "main": "index.js",
   "scripts": {
@@ -246,6 +246,7 @@
       "dist/credentials/MiroOAuth2Api.credentials.js",
       "dist/credentials/MispApi.credentials.js",
       "dist/credentials/MistApi.credentials.js",
+      "dist/credentials/MistralCloudApi.credentials.js",
       "dist/credentials/MoceanApi.credentials.js",
       "dist/credentials/MondayComApi.credentials.js",
       "dist/credentials/MondayComOAuth2Api.credentials.js",
