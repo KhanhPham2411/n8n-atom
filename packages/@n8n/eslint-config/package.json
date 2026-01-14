@@ -2,7 +2,7 @@
   "private": true,
   "name": "@n8n/eslint-config",
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "exports": {
     "./base": {
       "types": "./dist/configs/base.d.js",
