@@ -694,7 +694,9 @@ export function useCanvasOperations() {
 				group: [],
 				description: '',
 				version: version ?? 1,
-				defaults: {},
+				defaults: {
+					name: type,
+				},
 				inputs: [],
 				outputs: [],
 			}
@@ -1020,7 +1022,8 @@ export function useCanvasOperations() {
 		const name =
 			node.name ??
 			nodeHelpers.getDefaultNodeName(node) ??
-			(nodeTypeDescription.defaults.name as string);
+			(nodeTypeDescription.defaults.name as string) ??
+			nodeTypeDescription.name;
 		const type = nodeTypeDescription.name;
 		const typeVersion = node.typeVersion;
 		const position =
